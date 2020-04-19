@@ -1,2 +1,3 @@
 # expo-firebase-recaptcha
-reCAPTCHA components for Firebase phone authentication 
+
+reCAPTCHA components for Firebase phone authentication 📱
