@@ -20,7 +20,7 @@ function getWebviewSource(firebaseConfig, firebaseVersion) {
 </head>
 <body style="background-image:linear-gradient(#464646, #000000); background-repeat: no-repeat; background-size:cover; height:100vh; display:flex; align-items:center; justify-content:center; flex-direction:column; font-family:arial; color:#ffffff">
 <h3 style="letter-spacing:2px">GRAVITY</h3>
-<p>Please tick box to continue.</p>  
+<p>Please the tick box to continue.</p>  
   <div id="recaptcha-cont" class="g-recaptcha"></div>
   <script>
     function onLoad() {
