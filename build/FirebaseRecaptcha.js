@@ -1,12 +1,12 @@
-import { CodedError } from '@unimodules/core';
-import { DEFAULT_WEB_APP_OPTIONS } from 'expo-firebase-core';
-import * as React from 'react';
-import { WebView } from 'react-native-webview';
+import { CodedError } from "@unimodules/core";
+import { DEFAULT_WEB_APP_OPTIONS } from "expo-firebase-core";
+import * as React from "react";
+import { WebView } from "react-native-webview";
 function getWebviewSource(firebaseConfig, firebaseVersion) {
-    firebaseVersion = firebaseVersion || '7.12.0';
-    return {
-        baseUrl: `https://${firebaseConfig.authDomain}`,
-        html: `
+  firebaseVersion = firebaseVersion || "7.12.0";
+  return {
+    baseUrl: `https://${firebaseConfig.authDomain}`,
+    html: `
 <!DOCTYPE html><html>
 <head>
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
@@ -14,9 +14,13 @@ function getWebviewSource(firebaseConfig, firebaseVersion) {
   <meta name="HandheldFriendly" content="true">
   <script src="https://www.gstatic.com/firebasejs/${firebaseVersion}/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/${firebaseVersion}/firebase-auth.js"></script>
-  <script type="text/javascript">firebase.initializeApp(${JSON.stringify(firebaseConfig)});</script>
+  <script type="text/javascript">firebase.initializeApp(${JSON.stringify(
+    firebaseConfig
+  )});</script>
 </head>
-<body>
+<body style="background-image:linear-gradient(#464646, #000000); background-repeat: no-repeat; background-size:cover; height:100vh; display:flex; align-items:center; justify-content:center; flex-direction:column; font-family:arial; color:#ffffff">
+<h3 style="letter-spacing:2px">GRAVITY</h3>
+<p>Please tick box to continue.</p>  
   <div id="recaptcha-cont" class="g-recaptcha"></div>
   <script>
     function onLoad() {
@@ -42,44 +46,70 @@ function getWebviewSource(firebaseConfig, firebaseVersion) {
   </script>
   <script src="https://www.google.com/recaptcha/api.js?onload=onLoad&render=explicit" onerror="onError()"></script>
 </body></html>`,
-    };
+  };
 }
 function validateFirebaseConfig(firebaseConfig) {
-    if (!firebaseConfig) {
-        throw new CodedError('ERR_FIREBASE_RECAPTCHA_CONFIG', `Missing firebase web configuration. Please set the "expo.web.config.firebase" field in "app.json" or use the "firebaseConfig" prop.`);
-    }
-    const { authDomain } = firebaseConfig;
-    if (!authDomain) {
-        throw new CodedError('ERR_FIREBASE_RECAPTCHA_CONFIG', `Missing "authDomain" in firebase web configuration.`);
-    }
+  if (!firebaseConfig) {
+    throw new CodedError(
+      "ERR_FIREBASE_RECAPTCHA_CONFIG",
+      `Missing firebase web configuration. Please set the "expo.web.config.firebase" field in "app.json" or use the "firebaseConfig" prop.`
+    );
+  }
+  const { authDomain } = firebaseConfig;
+  if (!authDomain) {
+    throw new CodedError(
+      "ERR_FIREBASE_RECAPTCHA_CONFIG",
+      `Missing "authDomain" in firebase web configuration.`
+    );
+  }
 }
 export default function FirebaseRecaptcha(props) {
-    const { firebaseConfig, firebaseVersion, onVerify, onLoad, onError, ...otherProps } = props;
-    validateFirebaseConfig(firebaseConfig);
-    if (!firebaseConfig) {
-        console.error(`FirebaseRecaptcha: Missing firebase web configuration. Please set the "expo.web.config.firebase" field in "app.json" or use the "firebaseConfig" prop.`);
-        return null;
-    }
-    return (<WebView javaScriptEnabled automaticallyAdjustContentInsets scalesPageToFit mixedContentMode="always" source={getWebviewSource(firebaseConfig, firebaseVersion)} onError={onError} onMessage={event => {
+  const {
+    firebaseConfig,
+    firebaseVersion,
+    onVerify,
+    onLoad,
+    onError,
+    ...otherProps
+  } = props;
+  validateFirebaseConfig(firebaseConfig);
+  if (!firebaseConfig) {
+    console.error(
+      `FirebaseRecaptcha: Missing firebase web configuration. Please set the "expo.web.config.firebase" field in "app.json" or use the "firebaseConfig" prop.`
+    );
+    return null;
+  }
+  return (
+    <WebView
+      javaScriptEnabled
+      automaticallyAdjustContentInsets
+      scalesPageToFit
+      mixedContentMode="always"
+      source={getWebviewSource(firebaseConfig, firebaseVersion)}
+      onError={onError}
+      onMessage={(event) => {
         const data = JSON.parse(event.nativeEvent.data);
         switch (data.type) {
-            case 'load':
-                if (onLoad) {
-                    onLoad();
-                }
-                break;
-            case 'error':
-                if (onError) {
-                    onError();
-                }
-                break;
-            case 'verify':
-                onVerify(data.token);
-                break;
+          case "load":
+            if (onLoad) {
+              onLoad();
+            }
+            break;
+          case "error":
+            if (onError) {
+              onError();
+            }
+            break;
+          case "verify":
+            onVerify(data.token);
+            break;
         }
-    }} {...otherProps}/>);
+      }}
+      {...otherProps}
+    />
+  );
 }
 FirebaseRecaptcha.defaultProps = {
-    firebaseConfig: DEFAULT_WEB_APP_OPTIONS,
+  firebaseConfig: DEFAULT_WEB_APP_OPTIONS,
 };
 //# sourceMappingURL=FirebaseRecaptcha.js.map
